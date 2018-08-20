@@ -33,42 +33,42 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define RCSID	"$Id: cbcp.c,v 1.17 2006/05/22 00:04:07 paulus Exp $"
+#define RCSID "$Id: cbcp.c,v 1.17 2006/05/22 00:04:07 paulus Exp $"
 
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/time.h>
+#include <sys/types.h>
 
-#include "pppd.h"
 #include "cbcp.h"
 #include "fsm.h"
 #include "lcp.h"
+#include "pppd.h"
 
 static const char rcsid[] = RCSID;
 
 /*
  * Options.
  */
-static int setcbcp __P((char **));
+static int setcbcp __P((char**));
 
 static option_t cbcp_option_list[] = {
-    { "callback", o_special, (void *)setcbcp,
-      "Ask for callback", OPT_PRIO | OPT_A2STRVAL, &cbcp[0].us_number },
+    { "callback", o_special, (void*)setcbcp,
+        "Ask for callback", OPT_PRIO | OPT_A2STRVAL, &cbcp[0].us_number },
     { NULL }
 };
 
 /*
  * Protocol entry points.
  */
-static void cbcp_init      __P((int unit));
-static void cbcp_open      __P((int unit));
-static void cbcp_lowerup   __P((int unit));
-static void cbcp_input     __P((int unit, u_char *pkt, int len));
-static void cbcp_protrej   __P((int unit));
-static int  cbcp_printpkt  __P((u_char *pkt, int len,
-				void (*printer) __P((void *, char *, ...)),
-				void *arg));
+static void cbcp_init __P((int unit));
+static void cbcp_open __P((int unit));
+static void cbcp_lowerup __P((int unit));
+static void cbcp_input __P((int unit, u_char* pkt, int len));
+static void cbcp_protrej __P((int unit));
+static int cbcp_printpkt __P((u_char * pkt, int len,
+    void(*printer) __P((void*, char*, ...)),
+    void* arg));
 
 struct protent cbcp_protent = {
     PPP_CBCP,
@@ -90,26 +90,25 @@ struct protent cbcp_protent = {
     NULL
 };
 
-cbcp_state cbcp[NUM_PPP];	
+cbcp_state cbcp[NUM_PPP];
 
 /* internal prototypes */
 
-static void cbcp_recvreq __P((cbcp_state *us, u_char *pckt, int len));
-static void cbcp_resp __P((cbcp_state *us));
-static void cbcp_up __P((cbcp_state *us));
-static void cbcp_recvack __P((cbcp_state *us, u_char *pckt, int len));
-static void cbcp_send __P((cbcp_state *us, int code, u_char *buf, int len));
+static void cbcp_recvreq __P((cbcp_state * us, u_char* pckt, int len));
+static void cbcp_resp __P((cbcp_state * us));
+static void cbcp_up __P((cbcp_state * us));
+static void cbcp_recvack __P((cbcp_state * us, u_char* pckt, int len));
+static void cbcp_send __P((cbcp_state * us, int code, u_char* buf, int len));
 
 /* option processing */
 static int
-setcbcp(argv)
-    char **argv;
+    setcbcp(argv) char** argv;
 {
     lcp_wantoptions[0].neg_cbcp = 1;
     cbcp_protent.enabled_flag = 1;
     cbcp[0].us_number = strdup(*argv);
     if (cbcp[0].us_number == 0)
-	novm("callback number");
+        novm("callback number");
     cbcp[0].us_type |= (1 << CB_CONF_USER);
     cbcp[0].us_type |= (1 << CB_CONF_ADMIN);
     return (1);
@@ -117,10 +116,9 @@ setcbcp(argv)
 
 /* init state */
 static void
-cbcp_init(iface)
-    int iface;
+    cbcp_init(iface) int iface;
 {
-    cbcp_state *us;
+    cbcp_state* us;
 
     us = &cbcp[iface];
     memset(us, 0, sizeof(cbcp_state));
@@ -130,10 +128,9 @@ cbcp_init(iface)
 
 /* lower layer is up */
 static void
-cbcp_lowerup(iface)
-    int iface;
+    cbcp_lowerup(iface) int iface;
 {
-    cbcp_state *us = &cbcp[iface];
+    cbcp_state* us = &cbcp[iface];
 
     dbglog("cbcp_lowerup");
     dbglog("want: %d", us->us_type);
@@ -143,31 +140,29 @@ cbcp_lowerup(iface)
 }
 
 static void
-cbcp_open(unit)
-    int unit;
+    cbcp_open(unit) int unit;
 {
     dbglog("cbcp_open");
 }
 
 /* process an incomming packet */
 static void
-cbcp_input(unit, inpacket, pktlen)
-    int unit;
-    u_char *inpacket;
-    int pktlen;
+    cbcp_input(unit, inpacket, pktlen) int unit;
+u_char* inpacket;
+int pktlen;
 {
-    u_char *inp;
+    u_char* inp;
     u_char code, id;
     u_short len;
 
-    cbcp_state *us = &cbcp[unit];
+    cbcp_state* us = &cbcp[unit];
 
     inp = inpacket;
 
     if (pktlen < CBCP_MINLEN) {
-	if (debug)
-	    dbglog("CBCP packet is too small");
-	return;
+        if (debug)
+            dbglog("CBCP packet is too small");
+        return;
     }
 
     GETCHAR(code, inp);
@@ -175,34 +170,34 @@ cbcp_input(unit, inpacket, pktlen)
     GETSHORT(len, inp);
 
     if (len > pktlen || len < CBCP_MINLEN) {
-	if (debug)
-	    dbglog("CBCP packet: invalid length %d", len);
+        if (debug)
+            dbglog("CBCP packet: invalid length %d", len);
         return;
     }
 
     len -= CBCP_MINLEN;
- 
-    switch(code) {
+
+    switch (code) {
     case CBCP_REQ:
         us->us_id = id;
-	cbcp_recvreq(us, inp, len);
-	break;
+        cbcp_recvreq(us, inp, len);
+        break;
 
     case CBCP_RESP:
-	if (debug)
-	    dbglog("CBCP_RESP received");
-	break;
+        if (debug)
+            dbglog("CBCP_RESP received");
+        break;
 
     case CBCP_ACK:
-	if (debug && id != us->us_id)
-	    dbglog("id doesn't match: expected %d recv %d",
-		   us->us_id, id);
+        if (debug && id != us->us_id)
+            dbglog("id doesn't match: expected %d recv %d",
+                us->us_id, id);
 
-	cbcp_recvack(us, inp, len);
-	break;
+        cbcp_recvack(us, inp, len);
+        break;
 
     default:
-	break;
+        break;
     }
 }
 
@@ -211,11 +206,11 @@ void cbcp_protrej(int iface)
 {
 }
 
-char *cbcp_codenames[] = {
+char* cbcp_codenames[] = {
     "Request", "Response", "Ack"
 };
 
-char *cbcp_optionnames[] = {
+char* cbcp_optionnames[] = {
     "NoCallback",
     "UserDefined",
     "AdminDefined",
@@ -224,28 +219,28 @@ char *cbcp_optionnames[] = {
 
 /* pretty print a packet */
 static int
-cbcp_printpkt(p, plen, printer, arg)
-    u_char *p;
-    int plen;
-    void (*printer) __P((void *, char *, ...));
-    void *arg;
+    cbcp_printpkt(p, plen, printer, arg)
+        u_char* p;
+int plen;
+void(*printer) __P((void*, char*, ...));
+void* arg;
 {
     int code, opt, id, len, olen, delay;
-    u_char *pstart;
+    u_char* pstart;
 
     if (plen < HEADERLEN)
-	return 0;
+        return 0;
     pstart = p;
     GETCHAR(code, p);
     GETCHAR(id, p);
     GETSHORT(len, p);
     if (len < HEADERLEN || len > plen)
-	return 0;
+        return 0;
 
-    if (code >= 1 && code <= sizeof(cbcp_codenames) / sizeof(char *))
-	printer(arg, " %s", cbcp_codenames[code-1]);
+    if (code >= 1 && code <= sizeof(cbcp_codenames) / sizeof(char*))
+        printer(arg, " %s", cbcp_codenames[code - 1]);
     else
-	printer(arg, " code=0x%x", code); 
+        printer(arg, " code=0x%x", code);
 
     printer(arg, " id=0x%x", id);
     len -= HEADERLEN;
@@ -254,47 +249,47 @@ cbcp_printpkt(p, plen, printer, arg)
     case CBCP_REQ:
     case CBCP_RESP:
     case CBCP_ACK:
-        while(len >= 2) {
-	    GETCHAR(opt, p);
-	    GETCHAR(olen, p);
+        while (len >= 2) {
+            GETCHAR(opt, p);
+            GETCHAR(olen, p);
 
-	    if (olen < 2 || olen > len) {
-	        break;
-	    }
+            if (olen < 2 || olen > len) {
+                break;
+            }
 
-	    printer(arg, " <");
-	    len -= olen;
+            printer(arg, " <");
+            len -= olen;
 
-	    if (opt >= 1 && opt <= sizeof(cbcp_optionnames) / sizeof(char *))
-	    	printer(arg, " %s", cbcp_optionnames[opt-1]);
-	    else
-	        printer(arg, " option=0x%x", opt); 
+            if (opt >= 1 && opt <= sizeof(cbcp_optionnames) / sizeof(char*))
+                printer(arg, " %s", cbcp_optionnames[opt - 1]);
+            else
+                printer(arg, " option=0x%x", opt);
 
-	    if (olen > 2) {
-	        GETCHAR(delay, p);
-		printer(arg, " delay = %d", delay);
-	    }
+            if (olen > 2) {
+                GETCHAR(delay, p);
+                printer(arg, " delay = %d", delay);
+            }
 
-	    if (olen > 3) {
-	        int addrt;
-		char str[256];
+            if (olen > 3) {
+                int addrt;
+                char str[256];
 
-		GETCHAR(addrt, p);
-		memcpy(str, p, olen - 4);
-		str[olen - 4] = 0;
-		printer(arg, " number = %s", str);
-	    }
-	    printer(arg, ">");
-	}
-	break;
+                GETCHAR(addrt, p);
+                memcpy(str, p, olen - 4);
+                str[olen - 4] = 0;
+                printer(arg, " number = %s", str);
+            }
+            printer(arg, ">");
+        }
+        break;
 
     default:
-	break;
+        break;
     }
 
     for (; len > 0; --len) {
-	GETCHAR(code, p);
-	printer(arg, " %.2x", code);
+        GETCHAR(code, p);
+        printer(arg, " %.2x", code);
     }
 
     return p - pstart;
@@ -302,10 +297,10 @@ cbcp_printpkt(p, plen, printer, arg)
 
 /* received CBCP request */
 static void
-cbcp_recvreq(us, pckt, pcktlen)
-    cbcp_state *us;
-    u_char *pckt;
-    int pcktlen;
+    cbcp_recvreq(us, pckt, pcktlen)
+        cbcp_state* us;
+u_char* pckt;
+int pcktlen;
 {
     u_char type, opt_len, delay, addr_type;
     char address[256];
@@ -316,57 +311,57 @@ cbcp_recvreq(us, pckt, pcktlen)
     while (len >= 2) {
         dbglog("length: %d", len);
 
-	GETCHAR(type, pckt);
-	GETCHAR(opt_len, pckt);
-	if (opt_len < 2 || opt_len > len)
-	    break;
+        GETCHAR(type, pckt);
+        GETCHAR(opt_len, pckt);
+        if (opt_len < 2 || opt_len > len)
+            break;
 
-	if (opt_len > 2)
-	    GETCHAR(delay, pckt);
+        if (opt_len > 2)
+            GETCHAR(delay, pckt);
 
-	us->us_allowed |= (1 << type);
+        us->us_allowed |= (1 << type);
 
-	switch(type) {
-	case CB_CONF_NO:
-	    dbglog("no callback allowed");
-	    break;
+        switch (type) {
+        case CB_CONF_NO:
+            dbglog("no callback allowed");
+            break;
 
-	case CB_CONF_USER:
-	    dbglog("user callback allowed");
-	    if (opt_len > 4) {
-	        GETCHAR(addr_type, pckt);
-		memcpy(address, pckt, opt_len - 4);
-		address[opt_len - 4] = 0;
-		if (address[0])
-		    dbglog("address: %s", address);
-	    }
-	    break;
+        case CB_CONF_USER:
+            dbglog("user callback allowed");
+            if (opt_len > 4) {
+                GETCHAR(addr_type, pckt);
+                memcpy(address, pckt, opt_len - 4);
+                address[opt_len - 4] = 0;
+                if (address[0])
+                    dbglog("address: %s", address);
+            }
+            break;
 
-	case CB_CONF_ADMIN:
-	    dbglog("user admin defined allowed");
-	    break;
+        case CB_CONF_ADMIN:
+            dbglog("user admin defined allowed");
+            break;
 
-	case CB_CONF_LIST:
-	    break;
-	}
-	len -= opt_len;
+        case CB_CONF_LIST:
+            break;
+        }
+        len -= opt_len;
     }
     if (len != 0) {
-	if (debug)
-	    dbglog("cbcp_recvreq: malformed packet (%d bytes left)", len);
-	return;
+        if (debug)
+            dbglog("cbcp_recvreq: malformed packet (%d bytes left)", len);
+        return;
     }
 
     cbcp_resp(us);
 }
 
 static void
-cbcp_resp(us)
-    cbcp_state *us;
+    cbcp_resp(us)
+        cbcp_state* us;
 {
     u_char cb_type;
     u_char buf[256];
-    u_char *bufp = buf;
+    u_char* bufp = buf;
     int len = 0;
     int slen;
 
@@ -378,64 +373,64 @@ cbcp_resp(us)
         lcp_down(us->us_unit);
 #endif
 
-    if (cb_type & ( 1 << CB_CONF_USER ) ) {
-	dbglog("cbcp_resp CONF_USER");
-	slen = strlen(us->us_number);
-	if (slen > 250) {
-	    warn("callback number truncated to 250 characters");
-	    slen = 250;
-	}
-	PUTCHAR(CB_CONF_USER, bufp);
-	len = 3 + 1 + slen + 1;
-	PUTCHAR(len , bufp);
-	PUTCHAR(5, bufp); /* delay */
-	PUTCHAR(1, bufp);
-	BCOPY(us->us_number, bufp, slen + 1);
-	cbcp_send(us, CBCP_RESP, buf, len);
-	return;
+    if (cb_type & (1 << CB_CONF_USER)) {
+        dbglog("cbcp_resp CONF_USER");
+        slen = strlen(us->us_number);
+        if (slen > 250) {
+            warn("callback number truncated to 250 characters");
+            slen = 250;
+        }
+        PUTCHAR(CB_CONF_USER, bufp);
+        len = 3 + 1 + slen + 1;
+        PUTCHAR(len, bufp);
+        PUTCHAR(5, bufp); /* delay */
+        PUTCHAR(1, bufp);
+        BCOPY(us->us_number, bufp, slen + 1);
+        cbcp_send(us, CBCP_RESP, buf, len);
+        return;
     }
 
-    if (cb_type & ( 1 << CB_CONF_ADMIN ) ) {
-	dbglog("cbcp_resp CONF_ADMIN");
+    if (cb_type & (1 << CB_CONF_ADMIN)) {
+        dbglog("cbcp_resp CONF_ADMIN");
         PUTCHAR(CB_CONF_ADMIN, bufp);
-	len = 3;
-	PUTCHAR(len, bufp);
-	PUTCHAR(5, bufp); /* delay */
-	cbcp_send(us, CBCP_RESP, buf, len);
-	return;
+        len = 3;
+        PUTCHAR(len, bufp);
+        PUTCHAR(5, bufp); /* delay */
+        cbcp_send(us, CBCP_RESP, buf, len);
+        return;
     }
 
-    if (cb_type & ( 1 << CB_CONF_NO ) ) {
+    if (cb_type & (1 << CB_CONF_NO)) {
         dbglog("cbcp_resp CONF_NO");
-	PUTCHAR(CB_CONF_NO, bufp);
-	len = 2;
-	PUTCHAR(len , bufp);
-	cbcp_send(us, CBCP_RESP, buf, len);
-	start_networks(us->us_unit);
-	return;
+        PUTCHAR(CB_CONF_NO, bufp);
+        len = 2;
+        PUTCHAR(len, bufp);
+        cbcp_send(us, CBCP_RESP, buf, len);
+        start_networks(us->us_unit);
+        return;
     }
 }
 
 static void
-cbcp_send(us, code, buf, len)
-    cbcp_state *us;
-    int code;
-    u_char *buf;
-    int len;
+    cbcp_send(us, code, buf, len)
+        cbcp_state* us;
+int code;
+u_char* buf;
+int len;
 {
-    u_char *outp;
+    u_char* outp;
     int outlen;
 
     outp = outpacket_buf;
 
     outlen = 4 + len;
-    
+
     MAKEHEADER(outp, PPP_CBCP);
 
     PUTCHAR(code, outp);
     PUTCHAR(us->us_id, outp);
     PUTSHORT(outlen, outp);
-    
+
     if (len)
         BCOPY(buf, outp, len);
 
@@ -443,10 +438,10 @@ cbcp_send(us, code, buf, len)
 }
 
 static void
-cbcp_recvack(us, pckt, len)
-    cbcp_state *us;
-    u_char *pckt;
-    int len;
+    cbcp_recvack(us, pckt, len)
+        cbcp_state* us;
+u_char* pckt;
+int len;
 {
     u_char type, delay, addr_type;
     int opt_len;
@@ -454,33 +449,33 @@ cbcp_recvack(us, pckt, len)
 
     if (len >= 2) {
         GETCHAR(type, pckt);
-	GETCHAR(opt_len, pckt);
-	if (opt_len >= 2 && opt_len <= len) {
-     
-	    if (opt_len > 2)
-		GETCHAR(delay, pckt);
+        GETCHAR(opt_len, pckt);
+        if (opt_len >= 2 && opt_len <= len) {
 
-	    if (opt_len > 4) {
-		GETCHAR(addr_type, pckt);
-		memcpy(address, pckt, opt_len - 4);
-		address[opt_len - 4] = 0;
-		if (address[0])
-		    dbglog("peer will call: %s", address);
-	    }
-	    if (type == CB_CONF_NO)
-		return;
+            if (opt_len > 2)
+                GETCHAR(delay, pckt);
 
-	    cbcp_up(us);
+            if (opt_len > 4) {
+                GETCHAR(addr_type, pckt);
+                memcpy(address, pckt, opt_len - 4);
+                address[opt_len - 4] = 0;
+                if (address[0])
+                    dbglog("peer will call: %s", address);
+            }
+            if (type == CB_CONF_NO)
+                return;
 
-	} else if (debug)
-	    dbglog("cbcp_recvack: malformed packet");
+            cbcp_up(us);
+
+        } else if (debug)
+            dbglog("cbcp_recvack: malformed packet");
     }
 }
 
 /* ok peer will do callback */
 static void
-cbcp_up(us)
-    cbcp_state *us;
+    cbcp_up(us)
+        cbcp_state* us;
 {
     persist = 0;
     status = EXIT_CALLBACK;

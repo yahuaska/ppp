@@ -660,8 +660,9 @@ int main(int argc, char *argv[])
     PPPoEConnection *conn;
 
     conn = malloc(sizeof(PPPoEConnection));
-    if (!conn)
-	fatalSys("malloc");
+    if (!conn) {
+        fatalSys("malloc");
+    }
 
     memset(conn, 0, sizeof(PPPoEConnection));
 
@@ -670,72 +671,73 @@ int main(int argc, char *argv[])
     conn->discoveryAttempts = MAX_PADI_ATTEMPTS;
 
     while ((opt = getopt(argc, argv, "I:D:VUQS:C:t:a:h")) > 0) {
-	switch(opt) {
-	case 'S':
-	    conn->serviceName = xstrdup(optarg);
-	    break;
-	case 'C':
-	    conn->acName = xstrdup(optarg);
-	    break;
-	case 't':
-	    if (sscanf(optarg, "%d", &conn->discoveryTimeout) != 1) {
-		fprintf(stderr, "Illegal argument to -t: Should be -t timeout\n");
-		exit(EXIT_FAILURE);
-	    }
-	    if (conn->discoveryTimeout < 1) {
-		conn->discoveryTimeout = 1;
-	    }
-	    break;
-	case 'a':
-	    if (sscanf(optarg, "%d", &conn->discoveryAttempts) != 1) {
-		fprintf(stderr, "Illegal argument to -a: Should be -a attempts\n");
-		exit(EXIT_FAILURE);
-	    }
-	    if (conn->discoveryAttempts < 1) {
-		conn->discoveryAttempts = 1;
-	    }
-	    break;
-	case 'U':
-	    conn->useHostUniq = 1;
-	    break;
-	case 'D':
-	    conn->debugFile = fopen(optarg, "w");
-	    if (!conn->debugFile) {
-		fprintf(stderr, "Could not open %s: %s\n",
-			optarg, strerror(errno));
-		exit(1);
-	    }
-	    fprintf(conn->debugFile, "pppoe-discovery %s\n", RP_VERSION);
-	    break;
-	case 'I':
-	    conn->ifName = xstrdup(optarg);
-	    break;
-	case 'Q':
-	    conn->printACNames = 0;
-	    break;
-	case 'V':
-	case 'h':
-	    usage();
-	    exit(0);
-	default:
-	    usage();
-	    exit(1);
-	}
+        switch(opt) {
+        case 'S':
+            conn->serviceName = xstrdup(optarg);
+            break;
+        case 'C':
+            conn->acName = xstrdup(optarg);
+            break;
+        case 't':
+            if (sscanf(optarg, "%d", &conn->discoveryTimeout) != 1) {
+                fprintf(stderr, "Illegal argument to -t: Should be -t timeout\n");
+                exit(EXIT_FAILURE);
+            }
+            if (conn->discoveryTimeout < 1) {
+                conn->discoveryTimeout = 1;
+            }
+            break;
+        case 'a':
+            if (sscanf(optarg, "%d", &conn->discoveryAttempts) != 1) {
+                fprintf(stderr, "Illegal argument to -a: Should be -a attempts\n");
+                exit(EXIT_FAILURE);
+            }
+            if (conn->discoveryAttempts < 1) {
+                conn->discoveryAttempts = 1;
+            }
+            break;
+        case 'U':
+            conn->useHostUniq = 1;
+            break;
+        case 'D':
+            conn->debugFile = fopen(optarg, "w");
+            if (!conn->debugFile) {
+                fprintf(stderr, "Could not open %s: %s\n", optarg, strerror(errno));
+                exit(1);
+            }
+            fprintf(conn->debugFile, "pppoe-discovery %s\n", RP_VERSION);
+            break;
+        case 'I':
+            conn->ifName = xstrdup(optarg);
+            break;
+        case 'Q':
+            conn->printACNames = 0;
+            break;
+        case 'V':
+        case 'h':
+            usage();
+            exit(0);
+        default:
+            usage();
+            exit(1);
+        }
     }
 
     /* default interface name */
-    if (!conn->ifName)
-	conn->ifName = strdup("eth0");
+    if (!conn->ifName) {
+        conn->ifName = strdup("eth0");
+    }
 
     conn->discoverySocket = -1;
     conn->sessionSocket = -1;
 
     discovery(conn);
 
-    if (!conn->numPADOs)
-	exit(1);
-    else
-	exit(0);
+    if (!conn->numPADOs) {
+        exit(1);
+    } else {
+        exit(0);
+    }
 }
 
 void rp_fatal(char const *str)

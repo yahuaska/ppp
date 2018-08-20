@@ -57,21 +57,21 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define RCSID	"$Id: ecp.c,v 1.4 2004/11/04 10:02:26 paulus Exp $"
+#define RCSID "$Id: ecp.c,v 1.4 2004/11/04 10:02:26 paulus Exp $"
 
 static const char rcsid[] = RCSID;
 
 #include <string.h>
 
-#include "pppd.h"
-#include "fsm.h"
 #include "ecp.h"
+#include "fsm.h"
+#include "pppd.h"
 
 static option_t ecp_option_list[] = {
     { "noecp", o_bool, &ecp_protent.enabled_flag,
-      "Disable ECP negotiation" },
+        "Disable ECP negotiation" },
     { "-ecp", o_bool, &ecp_protent.enabled_flag,
-      "Disable ECP negotiation", OPT_ALIAS },
+        "Disable ECP negotiation", OPT_ALIAS },
 
     { NULL }
 };
@@ -88,9 +88,9 @@ static void ecp_lowerdown __P((int));
 static void ecp_input __P((int unit, u_char *pkt, int len));
 static void ecp_protrej __P((int unit));
 */
-static int  ecp_printpkt __P((u_char *pkt, int len,
-			      void (*printer) __P((void *, char *, ...)),
-			      void *arg));
+static int ecp_printpkt __P((u_char * pkt, int len,
+    void(*printer) __P((void*, char*, ...)),
+    void* arg));
 /*
 static void ecp_datainput __P((int unit, u_char *pkt, int len));
 */
@@ -116,10 +116,10 @@ struct protent ecp_protent = {
 };
 
 fsm ecp_fsm[NUM_PPP];
-ecp_options ecp_wantoptions[NUM_PPP];	/* what to request the peer to use */
-ecp_options ecp_gotoptions[NUM_PPP];	/* what the peer agreed to do */
-ecp_options ecp_allowoptions[NUM_PPP];	/* what we'll agree to do */
-ecp_options ecp_hisoptions[NUM_PPP];	/* what we agreed to do */
+ecp_options ecp_wantoptions[NUM_PPP]; /* what to request the peer to use */
+ecp_options ecp_gotoptions[NUM_PPP]; /* what the peer agreed to do */
+ecp_options ecp_allowoptions[NUM_PPP]; /* what we'll agree to do */
+ecp_options ecp_hisoptions[NUM_PPP]; /* what we agreed to do */
 
 static fsm_callbacks ecp_callbacks = {
     NULL, /* ecp_resetci, */
@@ -143,31 +143,27 @@ static fsm_callbacks ecp_callbacks = {
  * ecp_init - initialize ECP.
  */
 static void
-ecp_init(unit)
-    int unit;
+    ecp_init(unit) int unit;
 {
-    fsm *f = &ecp_fsm[unit];
+    fsm* f = &ecp_fsm[unit];
 
     f->unit = unit;
     f->protocol = PPP_ECP;
     f->callbacks = &ecp_callbacks;
     fsm_init(f);
 
-    memset(&ecp_wantoptions[unit],  0, sizeof(ecp_options));
-    memset(&ecp_gotoptions[unit],   0, sizeof(ecp_options));
+    memset(&ecp_wantoptions[unit], 0, sizeof(ecp_options));
+    memset(&ecp_gotoptions[unit], 0, sizeof(ecp_options));
     memset(&ecp_allowoptions[unit], 0, sizeof(ecp_options));
-    memset(&ecp_hisoptions[unit],   0, sizeof(ecp_options));
-
+    memset(&ecp_hisoptions[unit], 0, sizeof(ecp_options));
 }
 
-
 static int
-ecp_printpkt(p, plen, printer, arg)
-    u_char *p;
-    int plen;
-    void (*printer) __P((void *, char *, ...));
-    void *arg;
+    ecp_printpkt(p, plen, printer, arg)
+        u_char* p;
+int plen;
+void(*printer) __P((void*, char*, ...));
+void* arg;
 {
     return 0;
 }
-

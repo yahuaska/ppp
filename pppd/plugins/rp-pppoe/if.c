@@ -13,12 +13,11 @@
 *
 ***********************************************************************/
 
-static char const RCSID[] =
-"$Id: if.c,v 1.2 2008/06/09 08:34:23 paulus Exp $";
+static char const RCSID[] = "$Id: if.c,v 1.2 2008/06/09 08:34:23 paulus Exp $";
 
 #define _GNU_SOURCE 1
-#include "pppoe.h"
 #include "pppd/pppd.h"
+#include "pppoe.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -54,7 +53,7 @@ static char const RCSID[] =
    use different frame types... sigh... */
 
 UINT16_t Eth_PPPOE_Discovery = ETH_PPPOE_DISCOVERY;
-UINT16_t Eth_PPPOE_Session   = ETH_PPPOE_SESSION;
+UINT16_t Eth_PPPOE_Session = ETH_PPPOE_SESSION;
 
 /**********************************************************************
 *%FUNCTION: etherType
@@ -72,11 +71,11 @@ UINT16_t Eth_PPPOE_Session   = ETH_PPPOE_SESSION;
 * translations of the data structure names.
 ***********************************************************************/
 UINT16_t
-etherType(PPPoEPacket *packet)
+etherType(PPPoEPacket* packet)
 {
-    UINT16_t type = (UINT16_t) ntohs(packet->ethHdr.h_proto);
+    UINT16_t type = (UINT16_t)ntohs(packet->ethHdr.h_proto);
     if (type != Eth_PPPOE_Discovery && type != Eth_PPPOE_Session) {
-	error("Invalid ether type 0x%x", type);
+        error("Invalid ether type 0x%x", type);
     }
     return type;
 }
@@ -92,10 +91,9 @@ etherType(PPPoEPacket *packet)
 *%DESCRIPTION:
 * Opens a raw Ethernet socket
 ***********************************************************************/
-int
-openInterface(char const *ifname, UINT16_t type, unsigned char *hwaddr)
+int openInterface(char const* ifname, UINT16_t type, unsigned char* hwaddr)
 {
-    int optval=1;
+    int optval = 1;
     int fd;
     struct ifreq ifr;
     int domain, stype;
@@ -117,48 +115,48 @@ openInterface(char const *ifname, UINT16_t type, unsigned char *hwaddr)
 #endif
 
     if ((fd = socket(domain, stype, htons(type))) < 0) {
-	/* Give a more helpful message for the common error case */
-	if (errno == EPERM) {
-	    fatal("Cannot create raw socket -- pppoe must be run as root.");
-	}
-	error("Can't open socket for pppoe: %m");
-	return -1;
+        /* Give a more helpful message for the common error case */
+        if (errno == EPERM) {
+            fatal("Cannot create raw socket -- pppoe must be run as root.");
+        }
+        error("Can't open socket for pppoe: %m");
+        return -1;
     }
 
     if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &optval, sizeof(optval)) < 0) {
-	error("Can't set socket options for pppoe: %m");
-	close(fd);
-	return -1;
+        error("Can't set socket options for pppoe: %m");
+        close(fd);
+        return -1;
     }
 
     /* Fill in hardware address */
     if (hwaddr) {
-	strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
-	if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0) {
-	    error("Can't get hardware address for %s: %m", ifname);
-	    close(fd);
-	    return -1;
-	}
-	memcpy(hwaddr, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
+        strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
+        if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0) {
+            error("Can't get hardware address for %s: %m", ifname);
+            close(fd);
+            return -1;
+        }
+        memcpy(hwaddr, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
 #ifdef ARPHRD_ETHER
-	if (ifr.ifr_hwaddr.sa_family != ARPHRD_ETHER) {
-	    warn("Interface %.16s is not Ethernet", ifname);
-	}
+        if (ifr.ifr_hwaddr.sa_family != ARPHRD_ETHER) {
+            warn("Interface %.16s is not Ethernet", ifname);
+        }
 #endif
-	if (NOT_UNICAST(hwaddr)) {
-	    fatal("Can't use interface %.16s: it has broadcast/multicast MAC address",
-		  ifname);
-	}
+        if (NOT_UNICAST(hwaddr)) {
+            fatal("Can't use interface %.16s: it has broadcast/multicast MAC address",
+                ifname);
+        }
     }
 
     /* Sanity check on MTU */
     strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
     if (ioctl(fd, SIOCGIFMTU, &ifr) < 0) {
-	error("Can't get MTU for %s: %m", ifname);
+        error("Can't get MTU for %s: %m", ifname);
     } else if (ifr.ifr_mtu < ETH_DATA_LEN) {
-	error("Interface %.16s has MTU of %d -- should be at least %d.",
-	      ifname, ifr.ifr_mtu, ETH_DATA_LEN);
-	error("This may cause serious connection problems.");
+        error("Interface %.16s has MTU of %d -- should be at least %d.",
+            ifname, ifr.ifr_mtu, ETH_DATA_LEN);
+        error("This may cause serious connection problems.");
     }
 
 #ifdef HAVE_STRUCT_SOCKADDR_LL
@@ -168,9 +166,9 @@ openInterface(char const *ifname, UINT16_t type, unsigned char *hwaddr)
 
     strncpy(ifr.ifr_name, ifname, sizeof(ifr.ifr_name));
     if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0) {
-	error("Could not get interface index for %s: %m", ifname);
-	close(fd);
-	return -1;
+        error("Could not get interface index for %s: %m", ifname);
+        close(fd);
+        return -1;
     }
     sa.sll_ifindex = ifr.ifr_ifindex;
 
@@ -179,15 +177,14 @@ openInterface(char const *ifname, UINT16_t type, unsigned char *hwaddr)
 #endif
 
     /* We're only interested in packets on specified interface */
-    if (bind(fd, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
-	error("Failed to bind to interface %s: %m", ifname);
-	close(fd);
-	return -1;
+    if (bind(fd, (struct sockaddr*)&sa, sizeof(sa)) < 0) {
+        error("Failed to bind to interface %s: %m", ifname);
+        close(fd);
+        return -1;
     }
 
     return fd;
 }
-
 
 /***********************************************************************
 *%FUNCTION: sendPacket
@@ -200,13 +197,12 @@ openInterface(char const *ifname, UINT16_t type, unsigned char *hwaddr)
 *%DESCRIPTION:
 * Transmits a packet
 ***********************************************************************/
-int
-sendPacket(PPPoEConnection *conn, int sock, PPPoEPacket *pkt, int size)
+int sendPacket(PPPoEConnection* conn, int sock, PPPoEPacket* pkt, int size)
 {
     int err;
 
     if (debug)
-	pppoe_log_packet("Send ", pkt);
+        pppoe_log_packet("Send ", pkt);
 #if defined(HAVE_STRUCT_SOCKADDR_LL)
     err = send(sock, pkt, size, 0);
 #else
@@ -216,8 +212,8 @@ sendPacket(PPPoEConnection *conn, int sock, PPPoEPacket *pkt, int size)
     err = sendto(sock, pkt, size, 0, &sa, sizeof(sa));
 #endif
     if (err < 0) {
-	error("error sending pppoe packet: %m");
-	return -1;
+        error("error sending pppoe packet: %m");
+        return -1;
     }
     return 0;
 }
@@ -233,14 +229,13 @@ sendPacket(PPPoEConnection *conn, int sock, PPPoEPacket *pkt, int size)
 *%DESCRIPTION:
 * Receives a packet
 ***********************************************************************/
-int
-receivePacket(int sock, PPPoEPacket *pkt, int *size)
+int receivePacket(int sock, PPPoEPacket* pkt, int* size)
 {
     if ((*size = recv(sock, pkt, sizeof(PPPoEPacket), 0)) < 0) {
-	error("error receiving pppoe packet: %m");
-	return -1;
+        error("error receiving pppoe packet: %m");
+        return -1;
     }
     if (debug)
-	pppoe_log_packet("Recv ", pkt);
+        pppoe_log_packet("Recv ", pkt);
     return 0;
 }
