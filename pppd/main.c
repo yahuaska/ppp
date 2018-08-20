@@ -722,8 +722,7 @@ setup_signals()
  * set_ifunit - do things we need to do once we know which ppp
  * unit we are using.
  */
-void
-    set_ifunit(iskey) int iskey;
+void set_ifunit(int iskey)
 {
     if (req_ifname[0] != '\0')
         slprintf(ifname, sizeof(ifname), "%s", req_ifname);
@@ -794,7 +793,7 @@ void reopen_log()
  * Create a file containing our process ID.
  */
 static void
-    create_pidfile(pid) int pid;
+create_pidfile(int pid)
 {
     FILE* pidfile;
 
@@ -809,8 +808,7 @@ static void
     }
 }
 
-void
-    create_linkpidfile(pid) int pid;
+void create_linkpidfile(int pid)
 {
     FILE* pidfile;
 
@@ -847,7 +845,7 @@ void remove_pidfiles()
  * holdoff_end - called via a timeout when the holdoff period ends.
  */
 static void
-    holdoff_end(arg) void* arg;
+holdoff_end(void* arg)
 {
     new_phase(PHASE_DORMANT);
 }
@@ -991,7 +989,7 @@ struct protocol_list {
  * protocol_name - find a name for a PPP protocol.
  */
 const char*
-    protocol_name(proto) int proto;
+protocol_name(int proto)
 {
     struct protocol_list* lp;
 
@@ -1096,11 +1094,7 @@ get_input()
  * send_config procedure called error() (or incremented error_count
  * itself), otherwise 0.
  */
-int
-    ppp_send_config(unit, mtu, accm, pcomp, accomp) int unit,
-    mtu;
-u_int32_t accm;
-int pcomp, accomp;
+int ppp_send_config(int unit, int mtu, u_int32_t accm, int pcomp, int accomp)
 {
     int errs;
 
@@ -1117,11 +1111,7 @@ int pcomp, accomp;
  * recv_config procedure called error() (or incremented error_count
  * itself), otherwise 0.
  */
-int
-    ppp_recv_config(unit, mru, accm, pcomp, accomp) int unit,
-    mru;
-u_int32_t accm;
-int pcomp, accomp;
+int ppp_recv_config(int unit, int mru, u_int32_t accm, int pcomp, int accomp)
 {
     int errs;
 
@@ -1146,8 +1136,7 @@ void new_phase(int p)
 /*
  * die - clean up state and exit with the specified status.
  */
-void
-    die(status) int status;
+void die(int status)
 {
     if (!doing_multilink || multilink_master)
         print_link_stats();
@@ -1195,8 +1184,7 @@ void print_link_stats()
 /*
  * reset_link_stats - "reset" stats when link goes up.
  */
-void
-    reset_link_stats(u) int u;
+void reset_link_stats(int u)
 {
     if (!get_ppp_stats(u, &old_link_stats))
         return;
@@ -1206,8 +1194,7 @@ void
 /*
  * update_link_stats - get stats at link termination.
  */
-void
-    update_link_stats(u) int u;
+void update_link_stats(int u)
 {
     struct timeval now;
     char numbuf[32];
@@ -1244,10 +1231,7 @@ static struct timeval timenow; /* Current time */
 /*
  * timeout - Schedule a timeout.
  */
-void
-    timeout(func, arg, secs, usecs) void(*func) __P((void*));
-void* arg;
-int secs, usecs;
+void timeout(void(*func) __P((void*)), void* arg, int secs, int usecs)
 {
     struct callout *newp, *p, **pp;
 
@@ -1281,9 +1265,7 @@ int secs, usecs;
 /*
  * untimeout - Unschedule a timeout.
  */
-void
-    untimeout(func, arg) void(*func) __P((void*));
-void* arg;
+void untimeout(void(*func) __P((void*)), void* arg)
 {
     struct callout **copp, *freep;
 
@@ -1327,7 +1309,7 @@ calltimeout()
  * timeleft - return the length of time until the next timeout is due.
  */
 static struct timeval*
-    timeleft(tvp) struct timeval* tvp;
+timeleft(struct timeval* tvp)
 {
     if (callout == NULL)
         return NULL;
@@ -1350,7 +1332,7 @@ static struct timeval*
  * We assume that sig is currently blocked.
  */
 static void
-    kill_my_pg(sig) int sig;
+kill_my_pg(int sig)
 {
     struct sigaction act, oldact;
     struct subprocess* chp;
@@ -1395,7 +1377,7 @@ static void
  * signal, we just take the link down.
  */
 static void
-    hup(sig) int sig;
+hup(int sig)
 {
     /* can't log a message here, it can deadlock */
     got_sighup = 1;
@@ -1414,7 +1396,7 @@ static void
  */
 /*ARGSUSED*/
 static void
-    term(sig) int sig;
+term(int sig)
 {
     /* can't log a message here, it can deadlock */
     got_sigterm = sig;
@@ -1431,7 +1413,7 @@ static void
  * Sets a flag so we will call reap_kids in the mainline.
  */
 static void
-    chld(sig) int sig;
+chld(int sig)
 {
     got_sigchld = 1;
     if (waiting)
@@ -1445,7 +1427,7 @@ static void
  */
 /*ARGSUSED*/
 static void
-    toggle_debug(sig) int sig;
+toggle_debug(int sig)
 {
     debug = !debug;
     if (debug) {
@@ -1462,7 +1444,7 @@ static void
  */
 /*ARGSUSED*/
 static void
-    open_ccp(sig) int sig;
+open_ccp(int sig)
 {
     got_sigusr2 = 1;
     if (waiting)
@@ -1473,7 +1455,7 @@ static void
  * bad_signal - We've caught a fatal signal.  Clean up state and exit.
  */
 static void
-    bad_signal(sig) int sig;
+bad_signal(int sig)
 {
     static int crashed = 0;
 
@@ -1572,8 +1554,7 @@ pid_t safe_fork(int infd, int outfd, int errfd)
 }
 
 static bool
-    add_script_env(pos, newstring) int pos;
-char* newstring;
+add_script_env(int pos, char* newstring)
 {
     if (pos + 1 >= s_env_nalloc) {
         int new_n = pos + 17;
@@ -1591,7 +1572,7 @@ char* newstring;
 }
 
 static void
-    remove_script_env(pos) int pos;
+remove_script_env(int pos)
 {
     free(script_env[pos] - 1);
     while ((script_env[pos] = script_env[pos + 1]) != NULL)
@@ -1620,10 +1601,7 @@ update_system_environment()
  * (e.g. to run the connector or disconnector script).
  * stderr gets connected to the log fd or to the _PATH_CONNERRS file.
  */
-int
-    device_script(program, in, out, dont_wait) char* program;
-int in, out;
-int dont_wait;
+int device_script(char* program, int in, int out, int dont_wait)
 {
     int pid;
     int status = -1;
@@ -1724,13 +1702,7 @@ update_script_environment()
  * If done != NULL, (*done)(arg) will be called later (within
  * reap_kids) iff the return value is > 0.
  */
-pid_t
-    run_program(prog, args, must_exist, done, arg, wait) char* prog;
-char** args;
-int must_exist;
-void(*done) __P((void*));
-void* arg;
-int wait;
+pid_t run_program(char* prog, char** args, int must_exist, void(*done) __P((void*)), void* arg, int wait)
 {
     int pid, status;
     struct stat sbuf;
@@ -1799,12 +1771,7 @@ int wait;
  * record_child - add a child process to the list for reap_kids
  * to use.
  */
-void
-    record_child(pid, prog, done, arg, killable) int pid;
-char* prog;
-void(*done) __P((void*));
-void* arg;
-int killable;
+void record_child(int pid, char* prog, void(*done) __P((void*)), void* arg, int killable)
 {
     struct subprocess* chp;
 
@@ -1843,7 +1810,7 @@ static void childwait_end(void* arg)
 /*
  * forget_child - clean up after a dead child
  */
-static void forget_child(int pid, ште status)
+static void forget_child(int pid, int status)
 {
     struct subprocess *chp, **prevp;
 
@@ -1892,10 +1859,7 @@ static int reap_kids()
 /*
  * add_notifier - add a new function to be called when something happens.
  */
-void
-    add_notifier(notif, func, arg) struct notifier** notif;
-notify_func func;
-void* arg;
+void add_notifier(struct notifier** notif, notify_func func, void* arg)
 {
     struct notifier* np;
 
@@ -1912,10 +1876,7 @@ void* arg;
  * remove_notifier - remove a function from the list of things to
  * be called when something happens.
  */
-void
-    remove_notifier(notif, func, arg) struct notifier** notif;
-notify_func func;
-void* arg;
+void remove_notifier(struct notifier** notif, notify_func func, void* arg)
 {
     struct notifier* np;
 
@@ -2111,8 +2072,7 @@ update_db_entry()
  * add_db_key - add a key that we can use to look up our database entry.
  */
 static void
-    add_db_key(str)
-        const char* str;
+add_db_key(const char* str)
 {
     TDB_DATA key, dbuf;
 
@@ -2128,8 +2088,7 @@ static void
  * delete_db_key - delete a key for looking up our database entry.
  */
 static void
-    delete_db_key(str)
-        const char* str;
+delete_db_key(const char* str)
 {
     TDB_DATA key;
 
