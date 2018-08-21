@@ -30,11 +30,11 @@
 
 #define RCSID "$Id: chap-md5.c,v 1.4 2004/11/09 22:39:25 paulus Exp $"
 
+#include "pppd.h"
 #include "chap-md5.h"
 #include "chap-new.h"
 #include "magic.h"
 #include "md5.h"
-#include "pppd.h"
 #include <stdlib.h>
 #include <string.h>
 

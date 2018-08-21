@@ -50,11 +50,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "chap-new.h"
+#include "pppd.h"
 #include "fsm.h"
 #include "lcp.h"
+#include "chap-new.h"
 #include "magic.h"
-#include "pppd.h"
 
 static const char rcsid[] = RCSID;
 

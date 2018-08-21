@@ -16,10 +16,10 @@
 
 /* #define SHA1HANDSOFF * Copies data before messing with it. */
 
-#include "sha1.h"
-#include <net/ppp_defs.h>
-#include <netinet/in.h> /* htonl() */
 #include <string.h>
+#include <netinet/in.h>	/* htonl() */
+#include <net/ppp_defs.h>
+#include "sha1.h"
 
 static void
     SHA1_Transform(u_int32_t[5], const unsigned char[64]);

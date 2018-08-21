@@ -45,17 +45,18 @@
  * right time.  Probably too hard -- the process just doesn't know.
  */
 
-#include "tdb.h"
-#include "spinlock.h"
-#include <errno.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <signal.h>
+#include "tdb.h"
+#include "spinlock.h"
 
 #define TDB_MAGIC_FOOD "TDB file\n"
 #define TDB_VERSION (0x26011967 + 6)

@@ -86,13 +86,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "pppd.h"
 #include "chap-new.h"
 #include "chap_ms.h"
-#include "magic.h"
 #include "md4.h"
-#include "pppcrypt.h"
-#include "pppd.h"
 #include "sha1.h"
+#include "pppcrypt.h"
+#include "magic.h"
 
 static const char rcsid[] = RCSID;
 
@@ -132,8 +132,8 @@ static char* mschap_challenge = NULL;
 static char* mschap2_peer_challenge = NULL;
 #endif
 
-#include "ccp.h"
 #include "fsm.h" /* Need to poke MPPE options */
+#include "ccp.h"
 #include <net/ppp-comp.h>
 #endif
 

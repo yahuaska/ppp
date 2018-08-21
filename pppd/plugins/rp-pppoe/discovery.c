@@ -11,10 +11,10 @@
 static char const RCSID[] = "$Id: discovery.c,v 1.6 2008/06/15 04:35:50 paulus Exp $";
 
 #define _GNU_SOURCE 1
+#include "pppoe.h"
+#include "pppd/pppd.h"
 #include "pppd/fsm.h"
 #include "pppd/lcp.h"
-#include "pppd/pppd.h"
-#include "pppoe.h"
 
 #include <errno.h>
 #include <stdlib.h>

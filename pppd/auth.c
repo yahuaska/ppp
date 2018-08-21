@@ -103,14 +103,14 @@
 #include <systemd/sd-daemon.h>
 #endif
 
+#include "pppd.h"
+#include "fsm.h"
 #include "ccp.h"
 #include "chap-new.h"
 #include "eap.h"
 #include "ecp.h"
-#include "fsm.h"
 #include "ipcp.h"
 #include "lcp.h"
-#include "pppd.h"
 #include "upap.h"
 #ifdef CBCP_SUPPORT
 #include "cbcp.h"

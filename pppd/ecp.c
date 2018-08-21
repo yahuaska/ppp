@@ -63,9 +63,9 @@ static const char rcsid[] = RCSID;
 
 #include <string.h>
 
-#include "ecp.h"
-#include "fsm.h"
 #include "pppd.h"
+#include "fsm.h"
+#include "ecp.h"
 
 static option_t ecp_option_list[] = {
     { "noecp", o_bool, &ecp_protent.enabled_flag,

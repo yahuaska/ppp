@@ -60,10 +60,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "pppd.h"
 #include "eap.h"
 #include "md5.h"
 #include "pathnames.h"
-#include "pppd.h"
 
 #ifdef USE_SRP
 #include "pppcrypt.h"

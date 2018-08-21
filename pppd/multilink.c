@@ -36,9 +36,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "pppd.h"
 #include "fsm.h"
 #include "lcp.h"
-#include "pppd.h"
 #include "tdb.h"
 
 bool endpoint_specified; /* user gave explicit endpoint discriminator */

@@ -91,11 +91,11 @@
 #include <unistd.h>
 #include <utmp.h>
 
-#include "fsm.h"
-#include "ipcp.h"
-#include "lcp.h"
-#include "magic.h"
 #include "pppd.h"
+#include "magic.h"
+#include "fsm.h"
+#include "lcp.h"
+#include "ipcp.h"
 #ifdef INET6
 #include "ipv6cp.h"
 #endif

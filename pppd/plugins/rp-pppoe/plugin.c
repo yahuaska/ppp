@@ -27,11 +27,11 @@ static char const RCSID[] = "$Id: plugin.c,v 1.17 2008/06/15 04:35:50 paulus Exp
 #define _GNU_SOURCE 1
 #include "pppoe.h"
 
-#include "pppd/ccp.h"
-#include "pppd/fsm.h"
-#include "pppd/ipcp.h"
-#include "pppd/lcp.h"
 #include "pppd/pppd.h"
+#include "pppd/fsm.h"
+#include "pppd/lcp.h"
+#include "pppd/ipcp.h"
+#include "pppd/ccp.h"
 /* #include "pppd/pathnames.h" */
 
 #include <errno.h>

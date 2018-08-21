@@ -33,9 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ccp.h"
-#include "fsm.h"
 #include "pppd.h"
+#include "fsm.h"
+#include "ccp.h"
 #include <net/ppp-comp.h>
 
 #ifdef MPPE

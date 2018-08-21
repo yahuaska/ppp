@@ -56,10 +56,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+#include "pppd.h"
 #include "fsm.h"
 #include "ipcp.h"
 #include "pathnames.h"
-#include "pppd.h"
 
 static const char rcsid[] = RCSID;
 

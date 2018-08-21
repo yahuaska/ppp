@@ -47,10 +47,10 @@
 #include <pcap-bpf.h>
 #endif
 
+#include "pppd.h"
 #include "fsm.h"
 #include "ipcp.h"
 #include "lcp.h"
-#include "pppd.h"
 
 static const char rcsid[] = RCSID;
 

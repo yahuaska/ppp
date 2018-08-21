@@ -30,8 +30,8 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "pppcrypt.h"
 #include "pppd.h"
+#include "pppcrypt.h"
 #include <errno.h>
 
 static u_char

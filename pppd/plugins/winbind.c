@@ -34,9 +34,9 @@
 *
 ***********************************************************************/
 
+#include "pppd.h"
 #include "chap-new.h"
 #include "chap_ms.h"
-#include "pppd.h"
 #ifdef MPPE
 #include "md5.h"
 #endif

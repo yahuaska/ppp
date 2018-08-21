@@ -161,12 +161,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "pppd.h"
 #include "fsm.h"
 #include "ipcp.h"
 #include "ipv6cp.h"
 #include "magic.h"
 #include "pathnames.h"
-#include "pppd.h"
 
 static const char rcsid[] = RCSID;
 

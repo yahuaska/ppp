@@ -94,9 +94,9 @@
 #include <unistd.h>
 #include <utmp.h>
 
+#include "pppd.h"
 #include "fsm.h"
 #include "lcp.h"
-#include "pppd.h"
 
 void tty_process_extra_options __P((void));
 void tty_check_options __P((void));

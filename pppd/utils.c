@@ -55,9 +55,9 @@
 #include <sys/mkdev.h>
 #endif
 
+#include "pppd.h"
 #include "fsm.h"
 #include "lcp.h"
-#include "pppd.h"
 
 static const char rcsid[] = RCSID;
 
