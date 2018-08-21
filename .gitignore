@@ -5,3 +5,4 @@
 *.a
 *.cat8
 Makefile
+*.pro.user
