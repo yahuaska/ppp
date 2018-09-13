@@ -90,14 +90,14 @@ namespace rng0 {
 	class FSM {
 	public:
 		FSM();
-		void lowerup();
-		void lowerdown();
-		void open();
+		virtual void lowerup();
+		virtual void lowerdown();
+		virtual void open();
 		void terminate_layer(State);
-		void close(char *reason);
+		virtual void close(char *reason);
 		// static void fsm_timeout __P((void *));
 		static void timeout(void *);
-		void input(u_char *, int);
+		virtual void input(u_char *, int);
 
 		// fsm_rconfreq __P((fsm *, int, u_char *, int));
 		void rconfreq(u_char id, u_char *inp, int len);
@@ -119,16 +119,18 @@ namespace rng0 {
 		inline char *proto_name() { return this->callbacks->proto_name; }
 
 		static inline char *proto_name(FSM *fsm) { return fsm->callbacks->proto_name; }
+//		virtual void init();
+		int flags;            /* Contains option bits */
 
 	protected:
 		void protreject();
 		int unit;            /* Interface unit number */
 		int protocol;        /* Data Link Layer Protocol field value */
 		int state;            /* State */
-		int flags;            /* Contains option bits */
 		u_char id;            /* Current id */
 		u_char reqid;        /* Current request id */
 		u_char seen_ack;        /* Have received valid Ack/Nak/Rej to Req */
+	public:
 		int timeouttime;        /* Timeout time in milliseconds */
 		int maxconfreqtransmits;    /* Maximum Configure-Request transmissions */
 		int retransmits;        /* Number of retransmissions left */
