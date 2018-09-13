@@ -2248,8 +2248,7 @@ void rng0::LCP::LcpEchoTimeout(rng0::LCP *self)
  * LcpEchoReply - LCP has received a reply to the echo
  */
 
-static void
-lcp_received_echo_reply(fsm *f, int id, u_char *inp, int len)
+void rng0::LCP::received_echo_reply(int, u_char *inp, int len)
 {
 	u_int32_t magic;
 
@@ -2259,7 +2258,7 @@ lcp_received_echo_reply(fsm *f, int id, u_char *inp, int len)
 		return;
 	}
 	GETLONG(magic, inp);
-	if (lcp_list[f->unit].get_gotoptions()->neg_magicnumber && magic == lcp_list[f->unit].get_gotoptions()->neg_magicnumber) {
+	if (this->get_gotoptions()->neg_magicnumber && magic == this->get_gotoptions()->neg_magicnumber) {
 		warn((char *)"appear to have received our own echo-reply!");
 		return;
 	}
@@ -2271,7 +2270,6 @@ lcp_received_echo_reply(fsm *f, int id, u_char *inp, int len)
 /*
  * LcpSendEchoRequest - Send an echo request frame to the peer
  */
-
 void rng0::LCP::LcpSendEchoRequest()
 {
 	u_int32_t lcp_magic;
@@ -2301,7 +2299,6 @@ void rng0::LCP::LcpSendEchoRequest()
 /*
  * lcp_echo_lowerup - Start the timer for the LCP frame
  */
-
 void rng0::LCP::echo_lowerup()
 {
 	/* Clear the parameters for generating echo frames */
@@ -2318,7 +2315,6 @@ void rng0::LCP::echo_lowerup()
 /*
  * lcp_echo_lowerdown - Stop the timer for the LCP frame
  */
-
 void rng0::LCP::echo_lowerdown()
 {
 	if (lcp_echo_timer_running != 0) {

@@ -23,7 +23,7 @@ namespace rng0 {
 	/*
  * Options.
  */
-#define CI_VENDOR	0	/* Vendor Specific */
+//#define CI_VENDOR	0	/* Vendor Specific */
 #define CI_MRU		1	/* Maximum Receive Unit */
 #define CI_ASYNCMAP	2	/* Async Control Character Map */
 #define CI_AUTHTYPE	3	/* Authentication Type */
@@ -31,21 +31,21 @@ namespace rng0 {
 #define CI_MAGICNUMBER	5	/* Magic Number */
 #define CI_PCOMPRESSION	7	/* Protocol Field Compression */
 #define CI_ACCOMPRESSION 8	/* Address/Control Field Compression */
-#define CI_FCSALTERN	9	/* FCS-Alternatives */
-#define CI_SDP		10	/* Self-Describing-Pad */
-#define CI_NUMBERED	11	/* Numbered-Mode */
+//#define CI_FCSALTERN	9	/* FCS-Alternatives */
+//#define CI_SDP		10	/* Self-Describing-Pad */
+//#define CI_NUMBERED	11	/* Numbered-Mode */
 #define CI_CALLBACK	13	/* callback */
 #define CI_MRRU		17	/* max reconstructed receive unit; multilink */
 #define CI_SSNHF	18	/* short sequence numbers for multilink */
 #define CI_EPDISC	19	/* endpoint discriminator */
-#define CI_MPPLUS	22	/* Multi-Link-Plus-Procedure */
-#define CI_LDISC	23	/* Link-Discriminator */
-#define CI_LCPAUTH	24	/* LCP Authentication */
-#define CI_COBS		25	/* Consistent Overhead Byte Stuffing */
-#define CI_PREFELIS	26	/* Prefix Elision */
-#define CI_MPHDRFMT	27	/* MP Header Format */
-#define CI_I18N		28	/* Internationalization */
-#define CI_SDL		29	/* Simple Data Link */
+//#define CI_MPPLUS	22	/* Multi-Link-Plus-Procedure */
+//#define CI_LDISC	23	/* Link-Discriminator */
+//#define CI_LCPAUTH	24	/* LCP Authentication */
+//#define CI_COBS		25	/* Consistent Overhead Byte Stuffing */
+//#define CI_PREFELIS	26	/* Prefix Elision */
+//#define CI_MPHDRFMT	27	/* MP Header Format */
+//#define CI_I18N		28	/* Internationalization */
+//#define CI_SDL		29	/* Simple Data Link */
 
 /* Default number of times we receive our magic number from the peer
    before deciding the link is looped-back. */
@@ -107,7 +107,6 @@ namespace rng0 {
 		static void delayed_up(void *);
 		void down();
 		void starting();
-		void finishing();
 		void finished();
 
 		void rprotrej(u_char *inp, int len);
