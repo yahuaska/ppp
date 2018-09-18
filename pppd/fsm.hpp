@@ -90,6 +90,7 @@ namespace rng0 {
 	class FSM {
 	public:
 		FSM();
+		void check_options() {};
 		virtual void lowerup();
 		virtual void lowerdown();
 		virtual void open();
