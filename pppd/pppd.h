@@ -108,10 +108,10 @@ enum opt_type {
 };
 
 typedef struct {
-	char	*name;		/* name of the option */
+	const char	*name;		/* name of the option */
 	enum opt_type type;
 	void	*addr;
-	char	*description;
+	const char	*description;
 	unsigned int flags;
 	void	*addr2;
 	int	upper_limit;

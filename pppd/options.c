@@ -423,12 +423,7 @@ parse_args(argc, argv)
  * options_from_file - Read a string of options from a file,
  * and interpret them.
  */
-int
-options_from_file(filename, must_exist, check_prot, priv)
-    char *filename;
-    int must_exist;
-    int check_prot;
-    int priv;
+int options_from_file(char *filename, int must_exist, int check_prot, int priv)
 {
     FILE *f;
     int i, newline, ret, err;
@@ -607,11 +602,7 @@ err:
 /*
  * match_option - see if this option matches an option_t structure.
  */
-static int
-match_option(name, opt, dowild)
-    char *name;
-    option_t *opt;
-    int dowild;
+static int match_option(char *name, option_t *opt, int dowild)
 {
 	int (*match) __P((char *, char **, int));
 
@@ -628,9 +619,7 @@ match_option(name, opt, dowild)
  * looking for an entry with the given name.
  * This could be optimized by using a hash table.
  */
-static option_t *
-find_option(name)
-    const char *name;
+static option_t *find_option(const char *name)
 {
 	option_t *opt;
 	struct option_list *list;
@@ -1071,8 +1060,7 @@ usage()
  * showhelp - print out usage message and exit.
  */
 static int
-showhelp(argv)
-    char **argv;
+showhelp(char **argv)
 {
     if (phase == PHASE_INITIALIZE) {
 	usage();
@@ -1155,11 +1143,7 @@ readable(fd)
  * \<newline> is ignored.
  */
 int
-getword(f, word, newlinep, filename)
-    FILE *f;
-    char *word;
-    int *newlinep;
-    char *filename;
+getword(FILE *f, char *word, int *newlinep, char *filename)
 {
     int c, len, escape;
     int quoted, comment;
@@ -1454,9 +1438,7 @@ readfile(argv)
  * callfile - take commands from /etc/ppp/peers/<name>.
  * Name may not contain /../, start with / or ../, or end in /..
  */
-static int
-callfile(argv)
-    char **argv;
+static int callfile(char **argv)
 {
     char *fname, *arg, *p;
     int l, ok;
@@ -1541,8 +1523,7 @@ setactivefilter(argv)
  * setdomain - Set domain name to append to hostname 
  */
 static int
-setdomain(argv)
-    char **argv;
+setdomain(char **argv)
 {
     gethostname(hostname, MAXNAMELEN);
     if (**argv != 0) {
@@ -1555,9 +1536,7 @@ setdomain(argv)
     return (1);
 }
 
-static int
-setlogfile(argv)
-    char **argv;
+static int setlogfile(char **argv)
 {
     int fd, err;
     uid_t euid;
@@ -1667,8 +1646,7 @@ loadplugin(argv)
  * Set an environment variable specified by the user.
  */
 static int
-user_setenv(argv)
-    char **argv;
+user_setenv(char **argv)
 {
     char *arg = argv[0];
     char *eqp;
@@ -1683,10 +1661,10 @@ user_setenv(argv)
 	return 0;
     }
     for (uep = userenv_list; uep != NULL; uep = uep->ue_next) {
-	int nlen = strlen(uep->ue_name);
-	if (nlen == (eqp - arg) &&
-	    strncmp(arg, uep->ue_name, nlen) == 0)
-	    break;
+		int nlen = strlen(uep->ue_name);
+		if (nlen == (eqp - arg) &&
+		    strncmp(arg, uep->ue_name, nlen) == 0)
+		    break;
     }
     /* Ignore attempts by unprivileged users to override privileged sources */
     if (uep != NULL && !privileged_option && uep->ue_priv)
@@ -1719,11 +1697,7 @@ user_setenv(argv)
     return 1;
 }
 
-static void
-user_setprint(opt, printer, arg)
-    option_t *opt;
-    printer_func printer;
-    void *arg;
+static void user_setprint(option_t *opt, printer_func printer, void *arg)
 {
     struct userenv *uep, *uepnext;
 
@@ -1743,8 +1717,7 @@ user_setprint(opt, printer, arg)
 }
 
 static int
-user_unsetenv(argv)
-    char **argv;
+user_unsetenv(char **arg)
 {
     struct userenv *uep, **insp;
     char *arg = argv[0];
@@ -1792,10 +1765,7 @@ user_unsetenv(argv)
 }
 
 static void
-user_unsetprint(opt, printer, arg)
-    option_t *opt;
-    printer_func printer;
-    void *arg;
+user_unsetprint(option_t *opt, printer_func printer, void *arg)
 {
     struct userenv *uep, *uepnext;
 
